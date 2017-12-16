@@ -1,0 +1,18 @@
+# Define commands
+# "()" defines a mandatory group (no effect by itself)
+# "[]" defines an optional group
+# a | b means a or b, but not both.
+# So, "look (at | under | in[side]?)" will match 
+
+$SUBJECT = (the )?(?P<subject>key|rug|box|lock)
+$OBJECT = (the )?(?P<object>key|rug|box|lock)
+
+$LOOKAT = (look at|examine)
+$LOOKUNDER = (look|examine) under
+$LOOKIN = (look in(side)?)
+
+$ACTION = (?P<action>$LOOKAT|$LOOKUNDER|$LOOKIN)
+
+$CONNECTOR = (with|on|at|in)
+$AND = (and|and,|,)
+$COMMAND = ($ACTION|$ACTION $OBJECT( and $ACTION $OBJECT)*|$ACTION $OBJECT( $AND $OBJECT)* $CONNECTOR $OBJECT)
