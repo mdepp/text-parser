@@ -1,18 +1,24 @@
 # Define commands
-# "()" defines a mandatory group (no effect by itself)
-# "[]" defines an optional group
-# a | b means a or b, but not both.
-# So, "look (at | under | in[side]?)" will match 
 
-$SUBJECT = (the )?(?P<subject>key|rug|box|lock)
-$OBJECT = (the )?(?P<object>key|rug|box|lock)
+$SUBJECT = ((the )?(?P<subject>key|rug|box|lock))
+$OBJECT = ((the )?(?P<object>key|rug|box|lock))
 
 $LOOKAT = (look at|examine)
 $LOOKUNDER = (look|examine) under
 $LOOKIN = (look in(side)?)
+$TAKE = (take|pick up)
+$PUT = (put)
 
-$ACTION = (?P<action>$LOOKAT|$LOOKUNDER|$LOOKIN)
+$ACTION = (?P<action>$LOOKAT|$LOOKUNDER|$LOOKIN|$TAKE|$PUT)
 
-$CONNECTOR = (with|on|at|in)
+$CONNECTOR = (?P<connector>with|on|at|in|under|behind)
 $AND = (and|and,|,)
-$COMMAND = ($ACTION|$ACTION $OBJECT( and $ACTION $OBJECT)*|$ACTION $OBJECT( $AND $OBJECT)* $CONNECTOR $OBJECT)
+
+$SUBJECTS = ($SUBJECT( $AND $SUBJECT)*)
+$OBJECTS = ($OBJECT( $AND $OBJECT)*)
+
+# Note - subject/object distinction here is more-or-less arbitrary (and also
+# probably not technically correct)
+$COMMAND = (?P<command>$ACTION $SUBJECTS|$ACTION $SUBJECTS $CONNECTOR $OBJECTS)
+
+$COMMANDS = $COMMAND( $AND $COMMAND)*

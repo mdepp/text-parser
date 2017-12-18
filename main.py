@@ -100,16 +100,17 @@ def main():
     for name, pattern in patterns.items():
         print(name, ':', pattern)
 
-    reg = regex.compile('^\\s*' + patterns['COMMAND'] + '\\s*$')
+    reg = regex.compile('^\\s*' + patterns['COMMANDS'] + '\\s*$')
     command = input('>')
     if reg.search(command):
         print("Valid command")
     else:
         print("Invalid command")
-
-    print('Actions:', [m.group('action') for m in reg.finditer(command)])
-    print('Subjects:', [m.group('subject') for m in reg.finditer(command)])
-    print('Objects:', [m.group('object') for m in reg.finditer(command)])
+    
+    print('Actions:', [m.captures('action') for m in reg.finditer(command)])
+    print('Subjects:', [m.captures('subject') for m in reg.finditer(command)])
+    print('Connectors:', [m.captures('connector') for m in reg.finditer(command)])
+    print('Objects:', [m.captures('object') for m in reg.finditer(command)])
 
 
 main()
