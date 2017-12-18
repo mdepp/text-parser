@@ -3,22 +3,38 @@
 $SUBJECT = ((the )?(?P<subject>key|rug|box|lock))
 $OBJECT = ((the )?(?P<object>key|rug|box|lock))
 
-$LOOKAT = (look at|examine)
-$LOOKUNDER = (look|examine) under
-$LOOKIN = (look in(side)?)
-$TAKE = (take|pick up)
-$PUT = (put)
-
-$ACTION = (?P<action>$LOOKAT|$LOOKUNDER|$LOOKIN|$TAKE|$PUT)
-
-$CONNECTOR = (?P<connector>with|on|at|in|under|behind)
 $AND = (and|and,|,)
-
 $SUBJECTS = ($SUBJECT( $AND $SUBJECT)*)
 $OBJECTS = ($OBJECT( $AND $OBJECT)*)
 
+# Commands are accessed by name, and can each have two lists of arguments, 
+# subjects and objects (these could be extended fairly easily).
+
+# Examine
+$LOOK = (?P<look>l(ook( around)?)?)
+$LOOKAT = (?P<lookat>(look at|examine) $SUBJECTS)
+$LOOKUNDER = (?P<lookunder>(look|examine) under $SUBJECTS)
+$LOOKIN = (?P<lookin>(look in(side)?) $SUBJECTS)
+# Take
+$TAKE = (?P<take>(take|pick up) $SUBJECTS)
+# Put
+$PUTON = (?P<puton>put $SUBJECTS on $OBJECTS)
+$PUTIN = (?P<putin>put $SUBJECTS in $OBJECTS)
+$PUTUNDER = (?P<putunder>put $SUBJECTS under $OBJECTS)
+# Open
+$OPEN = (?P<open>open $OBJECTS)
+# Close
+$CLOSE = (?P<close>close $OBJECTS)
+# Unlock
+$UNLOCK = (?P<unlock>open $OBJECTS with $SUBJECTS|unlock $OBJECTS with $SUBJECTS)
+# Lock
+$LOCK = (?P<lock>lock $OBJECTS with $SUBJECTS)
+
+# $CONNECTOR = (?P<connector>with|on|at|in|under|behind)
+
+
 # Note - subject/object distinction here is more-or-less arbitrary (and also
 # probably not technically correct)
-$COMMAND = (?P<command>$ACTION $SUBJECTS|$ACTION $SUBJECTS $CONNECTOR $OBJECTS)
+$COMMAND = (?P<command>$LOOKAT|$LOOKUNDER|$LOOKIN|$TAKE|$PUTON|$PUTIN|$PUTUNDER|$OPEN|$CLOSE|$UNLOCK|$LOCK)
 
 $COMMANDS = $COMMAND( $AND $COMMAND)*

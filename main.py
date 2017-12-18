@@ -66,11 +66,13 @@ def substitute_variables(patterns):
     
     return patterns
 
-def main():
+def load_patterns():
     """
-    Main program function
+    Reads 'patterns.txt' for command regex patterns, substitutes variables as
+    appropriate, and returns a dictionary of variables to patterns.
     """
-    patterns = {} # Pattern variables
+    patterns = {} # Variables to patterns
+
     # Read patterns from file
     with open('patterns.txt') as f:
         for line in f:
@@ -91,14 +93,47 @@ def main():
 
     # Make variable substitutions
     patterns = substitute_variables(patterns)
-
     if not patterns:
         print("Could not substitute variables.")
         return
 
-    # Display new patterns
+    return patterns
+
+def load_action_list():
+    """
+    Reads 'action-list.txt' for all valid action IDs and returns them as a list.
+    """
+    actions = []
+    with open('action-list.txt') as f:
+        for line in f:
+            # Remove comments and initial/trailing whitespace
+            line = remove_comments(line)
+            line = line.strip()
+            if not line:
+                continue # Skip blank lines
+
+            actions.append(line)
+
+    return actions
+
+def main():
+    """
+    Main program function
+    """
+    # Load command patterns
+    patterns = load_patterns()
+    
+    if not patterns:
+        print('Could not read patterns.')
+        return
+    
+    # Display all patterns
     for name, pattern in patterns.items():
         print(name, ':', pattern)
+
+    # Load action list
+    actions = load_action_list()
+
 
     reg = regex.compile('^\\s*' + patterns['COMMANDS'] + '\\s*$')
     command = input('>')
@@ -106,11 +141,26 @@ def main():
         print("Valid command")
     else:
         print("Invalid command")
-    
-    print('Actions:', [m.captures('action') for m in reg.finditer(command)])
-    print('Subjects:', [m.captures('subject') for m in reg.finditer(command)])
-    print('Connectors:', [m.captures('connector') for m in reg.finditer(command)])
-    print('Objects:', [m.captures('object') for m in reg.finditer(command)])
+
+    for action in actions:
+        try:
+            results = [m.captures(action) for m in reg.finditer(command)]
+        except IndexError:
+            results = None
+        if not results:
+            continue
+        for result in results[0]:
+            if not result:
+                continue
+            print('Action({name}): {text}'.format(name=action, text=result))
+            try:
+                print('Subjects:', [m.captures('subject')[0] for m in reg.finditer(result)])
+            except:
+                pass
+            try:
+                print('Objects:', [m.captures('object')[0] for m in reg.finditer(result)])
+            except:
+                pass
 
 
 main()

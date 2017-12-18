@@ -1,0 +1,19 @@
+# Examine
+look
+lookat
+lookunder
+lookin
+# Take
+take
+# Put
+puton
+putin
+putunder
+# Open
+open
+# Close
+close
+# Unlock
+unlock
+# Lock
+lock
